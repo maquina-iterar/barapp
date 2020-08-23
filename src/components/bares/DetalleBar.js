@@ -1,11 +1,14 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
-import { Link } from "react-router-dom";
+import Layout from "../Layout";
+import environment from "../../environment";
+import axios from "axios";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -16,14 +19,18 @@ const useStyles = makeStyles({
   },
 });
 
-const Bar = ({ value }) => {
+const DetalleBar = () => {
   const classes = useStyles();
 
-  const { nombre, fotoUrl, descripcion, _id } = value;
+  const { id } = useParams();
+
+  const { isLoading, data: bar = {}, error } = useQuery(["bar", id], getBar);
+
+  const { nombre, fotoUrl, descripcion, ubicacionUrl } = bar;
 
   return (
-    <Card className={classes.root}>
-      <CardActionArea component={Link} to={`/bar/${_id}`}>
+    <Layout>
+      <Card className={classes.root}>
         <CardMedia className={classes.media} image={fotoUrl} title={nombre} />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
@@ -33,9 +40,17 @@ const Bar = ({ value }) => {
             {descripcion}
           </Typography>
         </CardContent>
-      </CardActionArea>
-    </Card>
+      </Card>
+    </Layout>
   );
 };
 
-export default Bar;
+export default DetalleBar;
+
+const getBar = async (_, id) => {
+  const apiUrl = `${environment.apiUrl}/${id}`;
+
+  const { data } = await axios.get(apiUrl);
+
+  return data;
+};

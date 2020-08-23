@@ -3,9 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
-import { Link } from "react-router-dom";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 const useStyles = makeStyles({
   root: {
@@ -16,21 +15,29 @@ const useStyles = makeStyles({
   },
 });
 
-const Bar = ({ value }) => {
+const BarLoading = () => {
   const classes = useStyles();
-
-  const { nombre, fotoUrl, descripcion, _id } = value;
 
   return (
     <Card className={classes.root}>
-      <CardActionArea component={Link} to={`/bar/${_id}`}>
-        <CardMedia className={classes.media} image={fotoUrl} title={nombre} />
+      <CardActionArea>
+        <Skeleton animation="wave" variant="rect" className={classes.media} />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-            {nombre}
+            <Skeleton
+              animation="wave"
+              height={10}
+              width="80%"
+              style={{ marginBottom: 6 }}
+            />
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            {descripcion}
+            <Skeleton
+              animation="wave"
+              height={10}
+              width="80%"
+              style={{ marginBottom: 6 }}
+            />
           </Typography>
         </CardContent>
       </CardActionArea>
@@ -38,4 +45,4 @@ const Bar = ({ value }) => {
   );
 };
 
-export default Bar;
+export default BarLoading;

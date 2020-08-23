@@ -3,16 +3,32 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import theme from "./assets/theme";
-import Layout from "./components/Layout";
 import ListadoBares from "./components/bares/ListadoBares";
+import DetalleBar from "./components/bares/DetalleBar";
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Layout>
-        <ListadoBares />
-      </Layout>
+
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <ListadoBares />
+          </Route>
+          <Route exact path="/bar/:id">
+            <DetalleBar />
+          </Route>
+          <Redirect to="/" />
+        </Switch>
+      </Router>
     </ThemeProvider>
   );
 }

@@ -1,48 +1,45 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Bar from "./Bar";
+import BarLoading from "./BarLoading";
+import Layout from "../../components/Layout";
+import environment from "../../environment";
+import axios from "axios";
+import { useQuery } from "react-query";
 
 const ListadoBares = () => {
-  const [bares, setBares] = useState([]);
-
-  useEffect(() => {
-    const action = async () => {
-      const bares = await getBares();
-      setBares(bares);
-    };
-
-    action();
-  }, []);
+  const { isLoading, data: bares, error } = useQuery("bares", getBares);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 20,
-      }}
-    >
-      {bares.map((bar) => (
-        <Bar
-          key={`bar-${bar._id}`}
-          nombre={bar.nombre}
-          descripcion={bar.descripcion}
-          fotoUrl={bar.fotoUrl}
-          ubicacionUrl={bar.ubicacionUrl}
-        />
-      ))}
-    </div>
+    <Layout>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 20,
+        }}
+      >
+        {bares &&
+          bares.map((bar) => <Bar key={`bar-${bar._id}`} value={bar} />)}
+
+        {isLoading && (
+          <>
+            <BarLoading />
+            <BarLoading />
+            <BarLoading />
+          </>
+        )}
+      </div>
+    </Layout>
   );
 };
 
 export default ListadoBares;
 
 const getBares = async () => {
-  const api = "http://localhost:5000/api/v1/bares";
+  const apiUrl = environment.apiUrl;
 
-  const bares = await fetch(api).then((response) => response.json());
+  const { data } = await axios.get(apiUrl);
 
-  console.log("bares", bares);
-
-  return bares;
+  return data;
 };
