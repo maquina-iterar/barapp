@@ -29,7 +29,7 @@ const DetalleBar = () => {
   const { nombre, fotoUrl, descripcion, ubicacionUrl } = bar;
 
   return (
-    <Layout>
+    <Layout backUrl="/">
       <Card className={classes.root}>
         <CardMedia className={classes.media} image={fotoUrl} title={nombre} />
         <CardContent>

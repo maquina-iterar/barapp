@@ -5,6 +5,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
+import IconButton from "@material-ui/core/IconButton";
+import VolverIcon from "@material-ui/icons/ArrowBack";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,17 +21,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Layout = ({ children }) => {
+const Layout = ({ children, backUrl, actions }) => {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
+          {backUrl && (
+            <IconButton
+              edge="start"
+              color="inherit"
+              component={Link}
+              to={backUrl}
+            >
+              <VolverIcon />
+            </IconButton>
+          )}
           <Typography variant="h6" className={classes.title}>
             Barapp
           </Typography>
-          <Button color="inherit">Agregar</Button>
+          {actions}
         </Toolbar>
       </AppBar>
 

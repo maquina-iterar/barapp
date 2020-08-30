@@ -5,6 +5,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "./assets/theme";
 import ListadoBares from "./components/bares/ListadoBares";
 import DetalleBar from "./components/bares/DetalleBar";
+import EditarBar from "./components/bares/EditarBar";
 
 import {
   BrowserRouter as Router,
@@ -22,6 +23,9 @@ function App() {
         <Switch>
           <Route exact path="/">
             <ListadoBares />
+          </Route>
+          <Route exact path="/bar/crear">
+            <EditarBar />
           </Route>
           <Route exact path="/bar/:id">
             <DetalleBar />
