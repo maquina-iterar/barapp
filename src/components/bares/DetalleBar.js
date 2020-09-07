@@ -19,6 +19,12 @@ const useStyles = makeStyles({
   },
 });
 
+const caracteriscasLabels = {
+  opcionVegetariana: "¿Tiene opción vegetariana?",
+  musiscaEnVivo: "¿Hay música en vivo?",
+  espacioAlAireLibre: "¿Tiene espacio al aire libre?",
+};
+
 const DetalleBar = () => {
   const classes = useStyles();
 
@@ -26,7 +32,18 @@ const DetalleBar = () => {
 
   const { isLoading, data: bar = {}, error } = useQuery(["bar", id], getBar);
 
-  const { nombre, fotoUrl, descripcion, ubicacionUrl } = bar;
+  console.log("bar", bar);
+
+  const {
+    nombre,
+    fotoUrl,
+    descripcion,
+    direccion,
+    pais,
+    contactos,
+    caracteristicas,
+    ubicacionUrl,
+  } = bar;
 
   return (
     <Layout backUrl="/">
@@ -39,6 +56,54 @@ const DetalleBar = () => {
           <Typography variant="body2" color="textSecondary" component="p">
             {descripcion}
           </Typography>
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              marginTop: 20,
+              marginBottom: 20,
+            }}
+          >
+            <Typography gutterBottom variant="subtitle1" component="span">
+              Dirección:
+            </Typography>
+            <a href={ubicacionUrl} rel="noopener noreferrer" target="_blank">
+              <Typography gutterBottom variant="subtitle1" component="span">
+                {`${direccion}, ${pais}`}
+              </Typography>
+            </a>
+          </div>
+          <Typography gutterBottom variant="h5" component="span">
+            Características
+          </Typography>
+          {caracteristicas &&
+            Object.keys(caracteristicas).map((caracteristica) => (
+              <div style={{ display: "flex", gap: "20px", marginTop: 5 }}>
+                <Typography gutterBottom variant="subtitle1" component="span">
+                  {`${caracteriscasLabels[caracteristica]}:`}
+                </Typography>
+                <Typography gutterBottom variant="subtitle1" component="span">
+                  {formatCaracteristica(caracteristicas[caracteristica])}
+                </Typography>
+              </div>
+            ))}
+          <Typography gutterBottom variant="h5" component="span">
+            Contactos
+          </Typography>
+          {contactos &&
+            contactos.map((contacto) => (
+              <div style={{ display: "flex", gap: "20px", marginTop: 5 }}>
+                <a
+                  href={contacto.link}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <Typography gutterBottom variant="subtitle1" component="span">
+                    {contacto.redSocial}
+                  </Typography>
+                </a>
+              </div>
+            ))}
         </CardContent>
       </Card>
     </Layout>
@@ -46,6 +111,12 @@ const DetalleBar = () => {
 };
 
 export default DetalleBar;
+
+const formatCaracteristica = (value) => {
+  if (typeof value === "string") return value;
+
+  return value ? "SI" : "NO";
+};
 
 const getBar = async (_, id) => {
   const apiUrl = `${environment.apiUrl}/${id}`;
