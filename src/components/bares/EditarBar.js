@@ -77,8 +77,6 @@ const EditarBar = () => {
     setData(limpio);
   };
 
-  console.log("data", data);
-
   return (
     <Layout backUrl="/">
       <Paper className={classes.root} elevation={3}>

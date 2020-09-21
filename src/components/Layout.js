@@ -3,11 +3,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import IconButton from "@material-ui/core/IconButton";
 import VolverIcon from "@material-ui/icons/ArrowBack";
 import { Link } from "react-router-dom";
+import LoginButton from "./LoginButton";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Layout = ({ children, backUrl, actions }) => {
+const Layout = ({ children, backUrl }) => {
   const classes = useStyles();
 
   return (
@@ -41,7 +41,7 @@ const Layout = ({ children, backUrl, actions }) => {
           <Typography variant="h6" className={classes.title}>
             Barapp
           </Typography>
-          {actions}
+          <LoginButton />
         </Toolbar>
       </AppBar>
 

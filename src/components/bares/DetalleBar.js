@@ -1,27 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
+import CardActionArea from "@material-ui/core/CardActionArea";
 import Layout from "../Layout";
 import environment from "../../environment";
 import axios from "axios";
 import { useQuery, useMutation, queryCache } from "react-query";
 import { useParams } from "react-router-dom";
-import IconButton from "@material-ui/core/IconButton";
 import LikeIcon from "@material-ui/icons/ThumbUp";
 import DislikeIcon from "@material-ui/icons/ThumbDown";
 import Divider from "@material-ui/core/Divider";
+import Button from "@material-ui/core/Button";
+import ButtonWithAuthPopup from "./ButtonWithAuthPopup";
+import Rating from "@material-ui/lab/Rating";
+import MobileStepper from "@material-ui/core/MobileStepper";
+import ArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import ArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import Lightbox from "react-image-lightbox";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
   },
   media: {
-    height: 140,
+    height: 240,
+    [theme.breakpoints.down("xs")]: {
+      height: 200,
+    },
   },
-});
+}));
 
 const caracteriscasLabels = {
   opcionVegetariana: () => "Tiene opción vegetariana",
@@ -30,6 +40,7 @@ const caracteriscasLabels = {
 };
 
 const queryBarDetails = "bar";
+const STARS_NUMBER = 5;
 
 const DetalleBar = () => {
   const classes = useStyles();
@@ -51,10 +62,10 @@ const DetalleBar = () => {
   });
 
   const {
-    meGusta,
-    noMeGusta,
+    meGusta = 0,
+    noMeGusta = 0,
     nombre,
-    fotoUrl,
+    galeria,
     descripcion,
     direccion,
     pais,
@@ -63,45 +74,114 @@ const DetalleBar = () => {
     ubicacionUrl,
   } = bar;
 
+  const [activeStep, setActiveStep] = useState(0);
+  const [galeriaOpened, setGaleriaOpened] = useState(false);
+  const maxSteps = galeria ? galeria.length : 0;
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => (prevActiveStep + 1) % galeria.length);
+  };
+
+  const handleBack = () => {
+    setActiveStep(
+      (prevActiveStep) => (prevActiveStep + galeria.length - 1) % galeria.length
+    );
+  };
+
+  const votantesCount = meGusta + noMeGusta;
+
+  const rating =
+    votantesCount > 0 ? (meGusta / votantesCount) * STARS_NUMBER : -1;
+
   return (
     <Layout backUrl="/">
       <Card className={classes.root}>
-        <CardMedia className={classes.media} image={fotoUrl} title={nombre} />
+        {galeriaOpened && (
+          <Lightbox
+            mainSrc={galeria[activeStep]}
+            nextSrc={galeria[(activeStep + 1) % galeria.length]}
+            prevSrc={
+              galeria[(activeStep + galeria.length - 1) % galeria.length]
+            }
+            enableZoom={false}
+            onCloseRequest={() => setGaleriaOpened(false)}
+            onMovePrevRequest={handleBack}
+            onMoveNextRequest={handleNext}
+          />
+        )}
+        <CardActionArea onClick={() => setGaleriaOpened(true)}>
+          <CardMedia
+            className={classes.media}
+            image={galeria && galeria[activeStep]}
+            title={nombre}
+          />
+        </CardActionArea>
+
+        <MobileStepper
+          steps={maxSteps}
+          position="static"
+          variant="dots"
+          activeStep={activeStep}
+          nextButton={
+            <Button
+              size="small"
+              onClick={handleNext}
+              disabled={activeStep === maxSteps - 1}
+            >
+              Siguiente
+              <ArrowRight />
+            </Button>
+          }
+          backButton={
+            <Button
+              size="small"
+              onClick={handleBack}
+              disabled={activeStep === 0}
+            >
+              <ArrowLeft />
+              Anterior
+            </Button>
+          }
+        />
         <CardContent
           style={{ display: "flex", flexDirection: "column", gap: "20px" }}
         >
           <div
             style={{
               display: "flex",
-              justifyContent: "center",
+              justifyContent: "space-between",
               alignItems: "center",
             }}
           >
-            <IconButton
-              color="primary"
-              disabled={["success", "loading"].includes(valoracionStatus)}
-              onClick={() => mutateValoracion({ id, valoracion: "megusta" })}
-            >
-              <LikeIcon />
-            </IconButton>
-            <Typography variant="h6" component="h6">
-              {meGusta}
-            </Typography>
-            <Divider
-              orientation="vertical"
-              flexItem
-              style={{ marginLeft: 10, marginRight: 10 }}
-            />
-            <Typography variant="h6" component="h6">
-              {noMeGusta}
-            </Typography>
-            <IconButton
-              disabled={["success", "loading"].includes(valoracionStatus)}
-              onClick={() => mutateValoracion({ id, valoracion: "nomegusta" })}
-              color="secondary"
-            >
-              <DislikeIcon />
-            </IconButton>
+            {rating !== -1 && <Rating value={rating} readOnly />}
+            {rating === -1 && (
+              <Typography color="textSecondary" variant={"subtitle1"}>
+                Todavia nadie votó, sé el primero!!
+              </Typography>
+            )}
+            <div style={{ display: "flex" }}>
+              <ButtonWithAuthPopup
+                color="primary"
+                disabled={["success", "loading"].includes(valoracionStatus)}
+                onClick={() => mutateValoracion({ id, valoracion: "megusta" })}
+              >
+                <LikeIcon />
+              </ButtonWithAuthPopup>
+              <Divider
+                orientation="vertical"
+                flexItem
+                style={{ marginLeft: 10, marginRight: 10 }}
+              />
+              <ButtonWithAuthPopup
+                disabled={["success", "loading"].includes(valoracionStatus)}
+                onClick={() =>
+                  mutateValoracion({ id, valoracion: "nomegusta" })
+                }
+                color="secondary"
+              >
+                <DislikeIcon />
+              </ButtonWithAuthPopup>
+            </div>
           </div>
           <div>
             <Typography gutterBottom variant="h5" component="h2">
@@ -192,7 +272,7 @@ const formatRedSocial = ({ redSocial, link }) => {
 };
 
 const getBar = async (_, id) => {
-  const apiUrl = `${environment.apiUrl}/${id}`;
+  const apiUrl = `${environment.apiUrl}/bares/${id}`;
 
   const { data } = await axios.get(apiUrl);
 
@@ -200,7 +280,7 @@ const getBar = async (_, id) => {
 };
 
 const postValoracion = async ({ id, valoracion }) => {
-  const apiUrl = `${environment.apiUrl}/${id}/${valoracion}`;
+  const apiUrl = `${environment.apiUrl}/bares/${id}/${valoracion}`;
 
   return await axios.post(apiUrl);
 };
