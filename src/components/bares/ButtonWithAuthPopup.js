@@ -32,7 +32,7 @@ const ButtonWithAuthPopup = ({ color, disabled, onClick, children }) => {
 
   const handleIngresar = () => {
     if (!isAuthenticated) {
-      loginWithRedirect();
+      loginWithRedirect(`${window.location.origin}${window.location.pathname}`);
     }
     setOpen(false);
   };
