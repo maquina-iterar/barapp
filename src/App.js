@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
@@ -12,6 +12,9 @@ import {
   Switch,
   Route,
   Redirect,
+  useParams,
+  useHistory,
+  useLocation,
 } from "react-router-dom";
 
 import { Auth0Provider } from "@auth0/auth0-react";
@@ -44,6 +47,9 @@ function App() {
             <Route exact path="/account">
               <Usuario />
             </Route>
+            <Route exact path="/callback">
+              <Auth0Callback />
+            </Route>
             <Redirect to="/" />
           </Switch>
         </Router>
@@ -53,3 +59,18 @@ function App() {
 }
 
 export default App;
+
+const Auth0Callback = () => {
+  const location = useLocation();
+  const history = useHistory();
+
+  useEffect(() => {
+    const url = new URLSearchParams(location.search).get("url");
+
+    if (url) {
+      history.replace(url);
+    }
+  }, [location, history]);
+
+  return null;
+};

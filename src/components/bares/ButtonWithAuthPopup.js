@@ -32,7 +32,9 @@ const ButtonWithAuthPopup = ({ color, disabled, onClick, children }) => {
 
   const handleIngresar = () => {
     if (!isAuthenticated) {
-      loginWithRedirect(`${window.location.origin}${window.location.pathname}`);
+      loginWithRedirect({
+        redirectUri: `${window.location.origin}/callback?url=${window.location.pathname}`,
+      });
     }
     setOpen(false);
   };
