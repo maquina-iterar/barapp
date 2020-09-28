@@ -11,13 +11,30 @@ import LoginButton from "./LoginButton";
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    minHeight: "100vh",
     flexGrow: 1,
+    "&::after": {
+      content: '""',
+      top: 0,
+      left: 0,
+      position: "absolute",
+      height: "30vh",
+      width: "100%",
+      background: theme.palette.primary.main,
+      zIndex: -200,
+    },
+  },
+  topbar: {
+    background: theme.palette.primary.main,
   },
   menuButton: {
     marginRight: theme.spacing(2),
   },
   title: {
     flexGrow: 1,
+    color: "#232326",
+    fontWeight: "bold",
+    fontSize: theme.typography.pxToRem(28),
   },
 }));
 
@@ -26,8 +43,8 @@ const Layout = ({ children, backUrl }) => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
+      <AppBar position="relative" elevation={0} className={classes.topbar}>
+        <Toolbar style={{ paddingRight: 5 }}>
           {backUrl && (
             <IconButton
               edge="start"
@@ -45,7 +62,7 @@ const Layout = ({ children, backUrl }) => {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="sm" style={{ padding: 20 }}>
+      <Container maxWidth="sm" style={{ padding: 20, zIndex: 1 }}>
         {children}
       </Container>
     </div>

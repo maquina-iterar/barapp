@@ -5,6 +5,7 @@ import Layout from "../../components/Layout";
 import environment from "../../environment";
 import axios from "axios";
 import { useQuery } from "react-query";
+import MiPosicion from "./MiPosicion";
 
 const ListadoBares = () => {
   const { isLoading, data: bares, error } = useQuery("bares", getBares);
@@ -19,6 +20,8 @@ const ListadoBares = () => {
           gap: 20,
         }}
       >
+        <MiPosicion />
+
         {bares &&
           bares.map((bar) => <Bar key={`bar-${bar._id}`} value={bar} />)}
 
