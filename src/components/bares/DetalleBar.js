@@ -68,10 +68,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// TODO: tal vez las caracteristica puedan ser un simple listado.
 const caracteriscasLabels = {
   opcionVegetariana: () => "Tiene opción vegetariana",
   musiscaEnVivo: () => "Tiene música en vivo",
   espacioAlAireLibre: (value) => `Tiene espacio ${value}`,
+  fumadores: (value) => `Tiene espacio para fumadores`
 };
 
 const queryBarDetails = "bar";
@@ -354,7 +356,8 @@ const StyledRating = withStyles({
 
 const formatRedSocial = ({ redSocial, link }) => {
   if (redSocial === "instagram") {
-    const linkArr = link.split("/");
+    const reg = /\/$/;
+    const linkArr = link.replace(reg, "").split("/");
 
     return `@${linkArr[linkArr.length - 1]}`;
   }
