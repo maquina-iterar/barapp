@@ -11,7 +11,7 @@ const ListadoBares = () => {
   const { isLoading, data: bares, error } = useQuery("bares", getBares);
 
   return (
-    <Layout>
+    <Layout title={"Barapp"}>
       <div
         style={{
           display: "flex",

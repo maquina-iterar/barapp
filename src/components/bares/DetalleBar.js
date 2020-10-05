@@ -20,16 +20,51 @@ import MobileStepper from "@material-ui/core/MobileStepper";
 import ArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import ArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import Lightbox from "react-image-lightbox";
+import { withStyles } from "@material-ui/core/styles";
+import Location from "../../assets/icons/Location";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
+    borderRadius: 8,
   },
   media: {
     height: 240,
     [theme.breakpoints.down("xs")]: {
       height: 200,
     },
+  },
+  title: {
+    flexGrow: 1,
+    color: "#232326",
+    fontWeight: "bold",
+    fontSize: theme.typography.pxToRem(28),
+  },
+  votos: {
+    fontWeight: 500,
+    fontSize: theme.typography.pxToRem(16),
+  },
+  galeriaActions: {
+    position: "absolute",
+    width: "100%",
+    bottom: 0,
+    left: 0,
+  },
+  galeriaDot: {
+    backgroundColor: "#fff",
+  },
+  galeriaDotActive: {
+    backgroundColor: "#FEBA01",
+    boxShadow: "0px 0px 40px -5px #212122",
+  },
+  direccion: {
+    color: "#616166",
+    fontSize: theme.typography.pxToRem(18),
+    fontWeight: 500,
+  },
+  direccion2: {
+    color: "#616166",
+    fontSize: theme.typography.pxToRem(14),
   },
 }));
 
@@ -95,6 +130,25 @@ const DetalleBar = () => {
 
   return (
     <Layout backUrl="/">
+      <div style={{ paddingBottom: 25 }}>
+        <Typography variant="h6" className={classes.title}>
+          {nombre}
+        </Typography>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          {rating !== -1 && <StyledRating value={rating} readOnly />}
+          {rating === -1 && (
+            <Typography color="textSecondary" variant={"subtitle1"}>
+              Todavia nadie votó, sé el primero!!
+            </Typography>
+          )}
+          {rating !== -1 && (
+            <Typography
+              variant="caption"
+              className={classes.votos}
+            >{`${votantesCount} votos`}</Typography>
+          )}
+        </div>
+      </div>
       <Card className={classes.root}>
         {galeriaOpened && (
           <Lightbox
@@ -109,40 +163,44 @@ const DetalleBar = () => {
             onMoveNextRequest={handleNext}
           />
         )}
-        <CardActionArea onClick={() => setGaleriaOpened(true)}>
-          <CardMedia
-            className={classes.media}
-            image={galeria && galeria[activeStep]}
-            title={nombre}
+        <div style={{ position: "relative" }}>
+          <CardActionArea onClick={() => setGaleriaOpened(true)}>
+            <CardMedia
+              className={classes.media}
+              image={galeria && galeria[activeStep]}
+              title={nombre}
+            />
+          </CardActionArea>
+          <MobileStepper
+            steps={maxSteps}
+            position="static"
+            variant="dots"
+            activeStep={activeStep}
+            classes={{
+              dot: classes.galeriaDot,
+              dotActive: classes.galeriaDotActive,
+              root: classes.galeriaActions,
+            }}
+            nextButton={
+              <Button
+                size="small"
+                onClick={handleNext}
+                disabled={activeStep === maxSteps - 1}
+              >
+                <ArrowRight style={{ color: "#fff" }} />
+              </Button>
+            }
+            backButton={
+              <Button
+                size="small"
+                onClick={handleBack}
+                disabled={activeStep === 0}
+              >
+                <ArrowLeft style={{ color: "#fff" }} />
+              </Button>
+            }
           />
-        </CardActionArea>
-
-        <MobileStepper
-          steps={maxSteps}
-          position="static"
-          variant="dots"
-          activeStep={activeStep}
-          nextButton={
-            <Button
-              size="small"
-              onClick={handleNext}
-              disabled={activeStep === maxSteps - 1}
-            >
-              Siguiente
-              <ArrowRight />
-            </Button>
-          }
-          backButton={
-            <Button
-              size="small"
-              onClick={handleBack}
-              disabled={activeStep === 0}
-            >
-              <ArrowLeft />
-              Anterior
-            </Button>
-          }
-        />
+        </div>
         <CardContent
           style={{ display: "flex", flexDirection: "column", gap: "20px" }}
         >
@@ -153,40 +211,45 @@ const DetalleBar = () => {
               alignItems: "center",
             }}
           >
-            {rating !== -1 && <Rating value={rating} readOnly />}
-            {rating === -1 && (
-              <Typography color="textSecondary" variant={"subtitle1"}>
-                Todavia nadie votó, sé el primero!!
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flex: 1,
+              }}
+            >
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="h2"
+                style={{ fontWeight: "bold" }}
+              >
+                {nombre}
               </Typography>
-            )}
-            <div style={{ display: "flex" }}>
-              <ButtonWithAuthPopup
-                color="primary"
-                disabled={["success", "loading"].includes(valoracionStatus)}
-                onClick={() => mutateValoracion({ id, valoracion: "megusta" })}
-              >
-                <LikeIcon />
-              </ButtonWithAuthPopup>
-              <Divider
-                orientation="vertical"
-                flexItem
-                style={{ marginLeft: 10, marginRight: 10 }}
-              />
-              <ButtonWithAuthPopup
-                disabled={["success", "loading"].includes(valoracionStatus)}
-                onClick={() =>
-                  mutateValoracion({ id, valoracion: "nomegusta" })
-                }
-                color="secondary"
-              >
-                <DislikeIcon />
-              </ButtonWithAuthPopup>
+              <div style={{ display: "flex", alignSelf: "flex-start" }}>
+                <ButtonWithAuthPopup
+                  color="secondary"
+                  disabled={["success", "loading"].includes(valoracionStatus)}
+                  onClick={() =>
+                    mutateValoracion({ id, valoracion: "megusta" })
+                  }
+                >
+                  <LikeIcon />
+                </ButtonWithAuthPopup>
+                <ButtonWithAuthPopup
+                  disabled={["success", "loading"].includes(valoracionStatus)}
+                  onClick={() =>
+                    mutateValoracion({ id, valoracion: "nomegusta" })
+                  }
+                  color="secondary"
+                >
+                  <DislikeIcon />
+                </ButtonWithAuthPopup>
+              </div>
             </div>
           </div>
           <div>
-            <Typography gutterBottom variant="h5" component="h2">
-              {nombre}
-            </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
               {descripcion}
             </Typography>
@@ -195,16 +258,35 @@ const DetalleBar = () => {
             style={{
               display: "flex",
               gap: "20px",
+              alignItems: "center",
             }}
           >
-            <Typography gutterBottom variant="subtitle1" component="span">
-              Dirección:
-            </Typography>
-            <a href={ubicacionUrl} rel="noopener noreferrer" target="_blank">
-              <Typography gutterBottom variant="subtitle1" component="span">
-                {`${direccion}, ${pais}`}
+            <Location secondary />
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <a
+                href={ubicacionUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+                style={{ textDecoration: "none" }}
+              >
+                <Typography
+                  gutterBottom
+                  variant="subtitle1"
+                  component="span"
+                  className={classes.direccion}
+                >
+                  {direccion}
+                </Typography>
+              </a>
+              <Typography
+                gutterBottom
+                variant="subtitle1"
+                component="span"
+                className={classes.direccion2}
+              >
+                {pais}
               </Typography>
-            </a>
+            </div>
           </div>
           <div>
             <Typography gutterBottom variant="h5" component="span">
@@ -260,6 +342,15 @@ const DetalleBar = () => {
 };
 
 export default DetalleBar;
+
+const StyledRating = withStyles({
+  iconFilled: {
+    color: "#0D1C2E",
+  },
+  iconEmpty: {
+    color: "#0D1C2E50",
+  },
+})(Rating);
 
 const formatRedSocial = ({ redSocial, link }) => {
   if (redSocial === "instagram") {

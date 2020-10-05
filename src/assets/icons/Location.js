@@ -1,8 +1,21 @@
 import React from "react";
 
-const Location = (props) => {
+const Location = ({ secondary }) => {
+  if (secondary) {
+    return (
+      <svg width={22} height={22} viewBox="0 0 22 22" fill="none">
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M4.583 8.25A6.412 6.412 0 0111 1.833a6.412 6.412 0 016.417 6.417c0 4.812-6.417 11.917-6.417 11.917S4.583 13.062 4.583 8.25zm4.125 0a2.293 2.293 0 104.585-.002 2.293 2.293 0 00-4.585.002z"
+          fill="#616166"
+        />
+      </svg>
+    );
+  }
+
   return (
-    <svg width={26} height={26} viewBox="0 0 26 26" fill="none" {...props}>
+    <svg width={26} height={26} viewBox="0 0 26 26" fill="none">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
