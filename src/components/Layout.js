@@ -32,11 +32,18 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
   title: {
+    paddingTop: 10,
     flexGrow: 1,
     color: "#232326",
     fontWeight: "bold",
     fontSize: theme.typography.pxToRem(28),
   },
+  container: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 20,
+    zIndex: 1
+  }
 }));
 
 const Layout = ({ children, backUrl, title }) => {
@@ -63,7 +70,7 @@ const Layout = ({ children, backUrl, title }) => {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="sm" style={{ padding: 20, zIndex: 1 }}>
+      <Container maxWidth="sm" className={classes.container}>
         {children}
       </Container>
     </div>

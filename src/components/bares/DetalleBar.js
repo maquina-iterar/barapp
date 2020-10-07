@@ -22,6 +22,7 @@ import ArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import Lightbox from "react-image-lightbox";
 import { withStyles } from "@material-ui/core/styles";
 import Location from "../../assets/icons/Location";
+import IconoCaracteristica from "../../assets/icons/IconoCaracteristica";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,6 +34,11 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("xs")]: {
       height: 200,
     },
+  },
+  detalleVotos: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px"
   },
   title: {
     flexGrow: 1,
@@ -55,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   },
   galeriaDotActive: {
     backgroundColor: "#FEBA01",
-    boxShadow: "0px 0px 40px -5px #212122",
+    boxShadow: "0px 0px 1px 1px #212122",
   },
   direccion: {
     color: "#616166",
@@ -66,12 +72,30 @@ const useStyles = makeStyles((theme) => ({
     color: "#616166",
     fontSize: theme.typography.pxToRem(14),
   },
+  titleCaracteristicaBar: {
+    fontSize: theme.typography.pxToRem(16),
+    fontStyle: "normal",
+    fontWeight: 500,
+    color: "#616166",
+  },
+  descripcionBar: {
+    fontWeight: 100,
+    color: "#777681",
+  },
+  lineaSeparadoraRedes: {
+    width: "100%",
+    border: 1,
+    borderStyle: "solid",
+    background: "#BDBDBD",
+    opacity: 0.3,
+    marginBottom: 20,
+  }
 }));
 
-const caracteriscasLabels = {
-  opcionVegetariana: () => "Tiene opción vegetariana",
-  musiscaEnVivo: () => "Tiene música en vivo",
-  espacioAlAireLibre: (value) => `Tiene espacio ${value}`,
+const caracteristicasLabels = {
+  opcionVegetariana: () => "Opción vegetariana",
+  musicaEnVivo: () => "Música en vivo",
+  espacioAlAireLibre: (value) => `Espacio ${value}`,
 };
 
 const queryBarDetails = "bar";
@@ -130,15 +154,15 @@ const DetalleBar = () => {
 
   return (
     <Layout backUrl="/">
-      <div style={{ paddingBottom: 25 }}>
+      <div style={{ paddingBottom: 18 }}>
         <Typography variant="h6" className={classes.title}>
           {nombre}
         </Typography>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div className={classes.detalleVotos}>
           {rating !== -1 && <StyledRating value={rating} readOnly />}
           {rating === -1 && (
             <Typography color="textSecondary" variant={"subtitle1"}>
-              Todavia nadie votó, sé el primero!!
+              Sin votos. Si fuíste, esperamos tú voto :)
             </Typography>
           )}
           {rating !== -1 && (
@@ -249,11 +273,6 @@ const DetalleBar = () => {
               </div>
             </div>
           </div>
-          <div>
-            <Typography variant="body2" color="textSecondary" component="p">
-              {descripcion}
-            </Typography>
-          </div>
           <div
             style={{
               display: "flex",
@@ -289,35 +308,46 @@ const DetalleBar = () => {
             </div>
           </div>
           <div>
-            <Typography gutterBottom variant="h5" component="span">
+            {/* <Typography gutterBottom variant="h5" component="span">
               Características
-            </Typography>
+            </Typography> */}
             {caracteristicas &&
               Object.keys(caracteristicas).map((key) => (
                 <React.Fragment key={`caracteristica-${key}`}>
                   {caracteristicas[key] && (
-                    <div style={{ display: "flex", gap: "20px", marginTop: 5 }}>
+                    <div style={{ display: "flex", gap: "20px", marginTop: 0, alignItems: "center" }}>
+                      {/* Falta enviarle como parámetro el nombre de la Característica para que cambie el Icono */}
+                      <IconoCaracteristica opcion="Musica" />
                       <Typography
                         gutterBottom
                         variant="subtitle1"
                         component="span"
+                        className={classes.titleCaracteristicaBar}
                       >
-                        {caracteriscasLabels[key](caracteristicas[key])}
+                        {caracteristicasLabels[key](caracteristicas[key])}
                       </Typography>
                     </div>
                   )}
                 </React.Fragment>
               ))}
           </div>
+
           <div>
-            <Typography gutterBottom variant="h5" component="span">
-              Contactos
+            <Typography variant="body2" color="textSecondary" component="p" className={classes.descripcionBar}>
+              {descripcion}
             </Typography>
+          </div>
+
+          <div>
+            {/* <Typography gutterBottom variant="h5" component="span">
+              Contactos
+            </Typography> */}
+            <hr className={classes.lineaSeparadoraRedes} />
             {contactos &&
               contactos.map((contacto, index) => (
                 <div
                   key={`contacto-${index}`}
-                  style={{ display: "flex", gap: "20px", marginTop: 5 }}
+                  style={{ display: "flex", gap: "20px", marginTop: 0 }}
                 >
                   <a
                     href={contacto.link}
@@ -372,6 +402,12 @@ const getBar = async (_, id) => {
 
 const postValoracion = async ({ id, valoracion }) => {
   const apiUrl = `${environment.apiUrl}/bares/${id}/${valoracion}`;
+
+  return await axios.post(apiUrl);
+};
+
+const votoBar = async ({ id, valoracion }) => {
+  const apiUrl = `${environment.apiUrl}/votosbares/${id}/${valoracion}`;
 
   return await axios.post(apiUrl);
 };
