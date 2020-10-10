@@ -96,6 +96,7 @@ const caracteristicasLabels = {
   opcionVegetariana: () => "Opción vegetariana",
   musicaEnVivo: () => "Música en vivo",
   espacioAlAireLibre: (value) => `Espacio ${value}`,
+  fumadores: () => `Espacio fumadores`,
 };
 
 const queryBarDetails = "bar";
