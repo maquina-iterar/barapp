@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
     width: 32,
     height: 32,
   }),
+  user: {
+    paddingTop: 10,
+  }
 }));
 
 const LoginButton = () => {
@@ -32,24 +35,30 @@ const LoginButton = () => {
   return (
     <>
       {!isAuthenticated && (
-        <IconButton
-          disabled={isAuthLoading}
-          color="inherit"
-          onClick={() => loginWithRedirect()}
-        >
-          <User />
-        </IconButton>
+        <div className={classes.user}>
+          <IconButton
+            disabled={isAuthLoading}
+            color="inherit"
+            onClick={() => loginWithRedirect()}
+            className={classes.user}
+          >
+            <User />
+          </IconButton>
+        </div>
       )}
       {isAuthenticated && (
-        <IconButton color="inherit" component={Link} to={"/account"}>
-          <Avatar
-            className={classes.avatar}
-            src={user.picture}
-            alt={user.nickname}
-          >
-            {user.name[0]}
-          </Avatar>
-        </IconButton>
+        <div className={classes.user}>
+          {user.name}
+          <IconButton color="inherit" component={Link} to={"/account"}>
+            <Avatar
+              className={classes.avatar}
+              src={user.picture}
+              alt={user.nickname}
+            >
+              {user.name[0]}
+            </Avatar>
+          </IconButton>
+        </div>
       )}
     </>
   );
