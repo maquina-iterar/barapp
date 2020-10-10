@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -23,6 +23,7 @@ import Lightbox from "react-image-lightbox";
 import { withStyles } from "@material-ui/core/styles";
 import Location from "../../assets/icons/Location";
 import IconoCaracteristica from "../../assets/icons/IconoCaracteristica";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -102,13 +103,35 @@ const caracteristicasLabels = {
 const queryBarDetails = "bar";
 const STARS_NUMBER = 5;
 
+const useAccessToken = () => {
+  const { getAccessTokenSilently } = useAuth0();
+  const [accessToken, setAccessToken] = useState(null);
+
+  useEffect(() => {
+    const action = async () => {
+      const accessToken = await getAccessTokenSilently();
+
+      console.log("accessToken", accessToken);
+
+      setAccessToken(accessToken);
+    };
+
+    action();
+  }, [getAccessTokenSilently, setAccessToken]);
+
+  return accessToken;
+};
+
 const DetalleBar = () => {
   const classes = useStyles();
 
   const { id } = useParams();
 
+  const { user } = useAuth0();
+  const accessToken = useAccessToken();
+
   const { isLoading, data: bar = {}, error } = useQuery(
-    [queryBarDetails, id],
+    [queryBarDetails, id, user ? user.sub : ""],
     getBar
   );
 
@@ -257,7 +280,7 @@ const DetalleBar = () => {
                   color="secondary"
                   disabled={["success", "loading"].includes(valoracionStatus)}
                   onClick={() =>
-                    mutateValoracion({ id, valoracion: "megusta" })
+                    mutateValoracion({ id, valoracion: "megusta", accessToken })
                   }
                 >
                   <LikeIcon />
@@ -265,7 +288,11 @@ const DetalleBar = () => {
                 <ButtonWithAuthPopup
                   disabled={["success", "loading"].includes(valoracionStatus)}
                   onClick={() =>
-                    mutateValoracion({ id, valoracion: "nomegusta" })
+                    mutateValoracion({
+                      id,
+                      valoracion: "nomegusta",
+                      accessToken,
+                    })
                   }
                   color="secondary"
                 >
@@ -406,22 +433,18 @@ const formatRedSocial = ({ redSocial, link }) => {
   return redSocial;
 };
 
-const getBar = async (_, id) => {
-  const apiUrl = `${environment.apiUrl}/bares/${id}`;
+const getBar = async (_, id, userId) => {
+  const apiUrl = `${environment.apiUrl}/bares/${id}?userId=${userId}`;
 
   const { data } = await axios.get(apiUrl);
 
   return data;
 };
 
-const postValoracion = async ({ id, valoracion }) => {
+const postValoracion = async ({ id, valoracion, accessToken }) => {
   const apiUrl = `${environment.apiUrl}/bares/${id}/${valoracion}`;
 
-  return await axios.post(apiUrl);
-};
-
-const votoBar = async ({ id, valoracion }) => {
-  const apiUrl = `${environment.apiUrl}/votosbares/${id}/${valoracion}`;
-
-  return await axios.post(apiUrl);
+  return await axios.post(apiUrl, null, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 };

@@ -27,7 +27,7 @@ function App() {
       domain={environment.auth0.domain}
       clientId={environment.auth0.clientId}
       redirectUri={window.location.origin}
-      audience={`https://${environment.auth0.domain}/api/v2/`}
+      audience={`https://api.barapp.com/`}
       scope="read:current_user update:current_user_metadata"
     >
       <ThemeProvider theme={theme}>
