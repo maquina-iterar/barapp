@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
-import theme from "./assets/theme";
-import ListadoBares from "./components/bares/ListadoBares";
-import DetalleBar from "./components/bares/DetalleBar";
-import EditarBar from "./components/bares/EditarBar";
+import theme from "assets/theme";
+import ListadoBares from "components/bares/ListadoBares";
+import DetalleBar from "components/bares/DetalleBar";
+import EditarBar from "components/bares/EditarBar";
 
 import {
   BrowserRouter as Router,
@@ -18,8 +18,8 @@ import {
 } from "react-router-dom";
 
 import { Auth0Provider } from "@auth0/auth0-react";
-import environment from "./environment";
-import Usuario from "./components/usuario/Usuario";
+import environment from "environment";
+import Usuario from "components/usuario/Usuario";
 
 function App() {
   return (

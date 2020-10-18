@@ -41,26 +41,35 @@ const ButtonWithAuthPopup = ({ color, disabled, onClick, children }) => {
 
   return (
     <div>
-      <IconButton color={color} disabled={disabled} onClick={handleClickOpen}>
+      <IconButton
+        color={color}
+        disableRipple={disabled}
+        disableFocusRipple={disabled}
+        disableTouchRipple={disabled}
+        onClick={disabled ? null : handleClickOpen}
+      >
         {children}
       </IconButton>
       <Dialog
         fullScreen={fullScreen}
         open={open}
+        fullWidth={true}
+        maxWidth={"sm"}
         onClose={handleClose}
         aria-labelledby="auth-popup-dialog"
       >
-        <DialogTitle id="auth-popup-dialog">Advertencia</DialogTitle>
+        <DialogTitle id="auth-popup-dialog">Info para votar</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Para poder votar, tenes que haberte logueado.
+            Iniciá sesión para votar, esto es necesario porque solo podés votar
+            una vez.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose} color="primary">
+          <Button autoFocus onClick={handleClose} color="secondary">
             Cerrar
           </Button>
-          <Button onClick={handleIngresar} color="primary" autoFocus>
+          <Button onClick={handleIngresar} color="secondary" autoFocus>
             Ingresar
           </Button>
         </DialogActions>

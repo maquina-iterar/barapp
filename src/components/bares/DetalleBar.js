@@ -5,14 +5,13 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 import CardActionArea from "@material-ui/core/CardActionArea";
-import Layout from "../Layout";
-import environment from "../../environment";
+import Layout from "components/Layout";
+import environment from "environment";
 import axios from "axios";
 import { useQuery, useMutation, queryCache } from "react-query";
 import { useParams } from "react-router-dom";
 import LikeIcon from "@material-ui/icons/ThumbUp";
 import DislikeIcon from "@material-ui/icons/ThumbDown";
-import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import ButtonWithAuthPopup from "./ButtonWithAuthPopup";
 import Rating from "@material-ui/lab/Rating";
@@ -21,9 +20,13 @@ import ArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import ArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import Lightbox from "react-image-lightbox";
 import { withStyles } from "@material-ui/core/styles";
-import Location from "../../assets/icons/Location";
-import IconoCaracteristica from "../../assets/icons/IconoCaracteristica";
+import Location from "assets/icons/Location";
+import IconoCaracteristica from "assets/icons/IconoCaracteristica";
 import { useAuth0 } from "@auth0/auth0-react";
+import IconButton from "@material-ui/core/IconButton";
+import PinOutline from "assets/icons/PinOutline";
+import Instagram from "assets/icons/Instagram";
+import Website from "assets/icons/Website";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -104,7 +107,7 @@ const queryBarDetails = "bar";
 const STARS_NUMBER = 5;
 
 const useAccessToken = () => {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const [accessToken, setAccessToken] = useState(null);
 
   useEffect(() => {
@@ -116,8 +119,8 @@ const useAccessToken = () => {
       setAccessToken(accessToken);
     };
 
-    action();
-  }, [getAccessTokenSilently, setAccessToken]);
+    if (isAuthenticated) action();
+  }, [getAccessTokenSilently, setAccessToken, isAuthenticated]);
 
   return accessToken;
 };
@@ -155,6 +158,7 @@ const DetalleBar = () => {
     contactos,
     caracteristicas,
     ubicacionUrl,
+    miValoracion,
   } = bar;
 
   const [activeStep, setActiveStep] = useState(0);
@@ -175,6 +179,8 @@ const DetalleBar = () => {
 
   const rating =
     votantesCount > 0 ? (meGusta / votantesCount) * STARS_NUMBER : -1;
+
+  console.log("bar", bar);
 
   return (
     <Layout backUrl="/">
@@ -277,8 +283,11 @@ const DetalleBar = () => {
               </Typography>
               <div style={{ display: "flex", alignSelf: "flex-start" }}>
                 <ButtonWithAuthPopup
-                  color="secondary"
-                  disabled={["success", "loading"].includes(valoracionStatus)}
+                  color={miValoracion === "megusta" ? "primary" : "secondary"}
+                  disabled={
+                    miValoracion ||
+                    ["success", "loading"].includes(valoracionStatus)
+                  }
                   onClick={() =>
                     mutateValoracion({ id, valoracion: "megusta", accessToken })
                   }
@@ -286,7 +295,10 @@ const DetalleBar = () => {
                   <LikeIcon />
                 </ButtonWithAuthPopup>
                 <ButtonWithAuthPopup
-                  disabled={["success", "loading"].includes(valoracionStatus)}
+                  disabled={
+                    miValoracion ||
+                    ["success", "loading"].includes(valoracionStatus)
+                  }
                   onClick={() =>
                     mutateValoracion({
                       id,
@@ -294,7 +306,7 @@ const DetalleBar = () => {
                       accessToken,
                     })
                   }
-                  color="secondary"
+                  color={miValoracion === "nomegusta" ? "primary" : "secondary"}
                 >
                   <DislikeIcon />
                 </ButtonWithAuthPopup>
@@ -308,7 +320,9 @@ const DetalleBar = () => {
               alignItems: "center",
             }}
           >
-            <Location secondary />
+            <div style={{ width: 30, alignSelf: "flex-start", paddingTop: 6 }}>
+              <Location secondary />
+            </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <a
                 href={ubicacionUrl}
@@ -336,9 +350,6 @@ const DetalleBar = () => {
             </div>
           </div>
           <div>
-            {/* <Typography gutterBottom variant="h5" component="span">
-              Características
-            </Typography> */}
             {caracteristicas &&
               Object.keys(caracteristicas).map((key) => (
                 <React.Fragment key={`caracteristica-${key}`}>
@@ -348,19 +359,26 @@ const DetalleBar = () => {
                         display: "flex",
                         gap: "20px",
                         marginTop: 0,
-                        alignItems: "center",
                       }}
                     >
-                      {/* Falta enviarle como parámetro el nombre de la Característica para que cambie el Icono */}
-                      <IconoCaracteristica opcion="Musica" />
-                      <Typography
-                        gutterBottom
-                        variant="subtitle1"
-                        component="span"
-                        className={classes.titleCaracteristicaBar}
+                      <div
+                        style={{
+                          width: 30,
+                          alignSelf: "center",
+                        }}
                       >
-                        {caracteristicasLabels[key](caracteristicas[key])}
-                      </Typography>
+                        <IconoCaracteristica opcion={key} />
+                      </div>
+                      <div style={{ display: "flex", flex: 1 }}>
+                        <Typography
+                          gutterBottom
+                          variant="subtitle1"
+                          component="span"
+                          className={classes.titleCaracteristicaBar}
+                        >
+                          {caracteristicasLabels[key](caracteristicas[key])}
+                        </Typography>
+                      </div>
                     </div>
                   )}
                 </React.Fragment>
@@ -379,30 +397,42 @@ const DetalleBar = () => {
           </div>
 
           <div>
-            {/* <Typography gutterBottom variant="h5" component="span">
-              Contactos
-            </Typography> */}
             <hr className={classes.lineaSeparadoraRedes} />
+            <IconButton
+              aria-label="Ubicación"
+              component={"a"}
+              href={ubicacionUrl}
+              target={"_blank"}
+              rel="noopener noreferrer"
+            >
+              <PinOutline />
+            </IconButton>
             {contactos &&
               contactos.map((contacto, index) => (
-                <div
-                  key={`contacto-${index}`}
-                  style={{ display: "flex", gap: "20px", marginTop: 0 }}
-                >
-                  <a
-                    href={contacto.link}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    <Typography
-                      gutterBottom
-                      variant="subtitle1"
-                      component="span"
+                <>
+                  {contacto.redSocial === "instagram" && (
+                    <IconButton
+                      aria-label="Instagram"
+                      component={"a"}
+                      href={contacto.link}
+                      target={"_blank"}
+                      rel="noopener noreferrer"
                     >
-                      {formatRedSocial(contacto)}
-                    </Typography>
-                  </a>
-                </div>
+                      <Instagram />
+                    </IconButton>
+                  )}
+                  {contacto.redSocial === "website" && (
+                    <IconButton
+                      aria-label="Web"
+                      component={"a"}
+                      href={contacto.link}
+                      target={"_blank"}
+                      rel="noopener noreferrer"
+                    >
+                      <Website />
+                    </IconButton>
+                  )}
+                </>
               ))}
           </div>
         </CardContent>

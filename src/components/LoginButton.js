@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   }),
   user: {
     paddingTop: 10,
-  }
+  },
 }));
 
 const LoginButton = () => {
@@ -48,14 +48,14 @@ const LoginButton = () => {
       )}
       {isAuthenticated && (
         <div className={classes.user}>
-          {user.name}
+          {/* {user.nickname} */}
           <IconButton color="inherit" component={Link} to={"/account"}>
             <Avatar
               className={classes.avatar}
               src={user.picture}
               alt={user.nickname}
             >
-              {user.name[0]}
+              {user.name[0].toUpperCase()}
             </Avatar>
           </IconButton>
         </div>
