@@ -6,9 +6,18 @@ import environment from "../../environment";
 import axios from "axios";
 import { useQuery } from "react-query";
 import MiPosicion from "./MiPosicion";
+import useMyLocation from "./useMyLocation";
 
 const ListadoBares = () => {
-  const { isLoading, data: bares, error } = useQuery("bares", getBares);
+  const location = useMyLocation();
+
+  const { isLoading, data: bares, error } = useQuery(
+    ["bares", location],
+    getBares,
+    {
+      enabled: location && location.length === 2,
+    }
+  );
 
   return (
     <Layout title={"Barapp"}>
@@ -20,7 +29,7 @@ const ListadoBares = () => {
           gap: 20,
         }}
       >
-        <MiPosicion />
+        <MiPosicion value={location} />
 
         {bares &&
           bares.map((bar) => <Bar key={`bar-${bar._id}`} value={bar} />)}
@@ -39,8 +48,8 @@ const ListadoBares = () => {
 
 export default ListadoBares;
 
-const getBares = async () => {
-  const apiUrl = `${environment.apiUrl}/bares`;
+const getBares = async (_, [latitude, longitude]) => {
+  const apiUrl = `${environment.apiUrl}/bares?latitude=${latitude}&longitude=${longitude}`;
 
   const { data } = await axios.get(apiUrl);
 

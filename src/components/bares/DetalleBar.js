@@ -114,8 +114,6 @@ const useAccessToken = () => {
     const action = async () => {
       const accessToken = await getAccessTokenSilently();
 
-      console.log("accessToken", accessToken);
-
       setAccessToken(accessToken);
     };
 
@@ -179,8 +177,6 @@ const DetalleBar = () => {
 
   const rating =
     votantesCount > 0 ? (meGusta / votantesCount) * STARS_NUMBER : -1;
-
-  console.log("bar", bar);
 
   return (
     <Layout backUrl="/">
