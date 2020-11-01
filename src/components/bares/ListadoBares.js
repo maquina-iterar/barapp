@@ -9,7 +9,7 @@ import MiPosicion from "./MiPosicion";
 import useMyLocation from "./useMyLocation";
 
 const ListadoBares = () => {
-  const location = useMyLocation();
+  const [location, setSelected] = useMyLocation();
 
   const { isLoading, data: bares, error } = useQuery(
     ["bares", location],
@@ -29,7 +29,16 @@ const ListadoBares = () => {
           gap: 20,
         }}
       >
-        <MiPosicion value={location} />
+        <MiPosicion
+          value={location}
+          onChange={(value) => {
+            setSelected(
+              value && value.location && value.location.coordinates
+                ? value.location.coordinates.reverse()
+                : null
+            );
+          }}
+        />
 
         {bares &&
           bares.map((bar) => <Bar key={`bar-${bar._id}`} value={bar} />)}

@@ -5,6 +5,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { useQuery } from "react-query";
 import environment from "environment";
+import InputLocation from "./InputLocation";
+import Link from "@material-ui/core/Link";
 
 const useStyles = makeStyles({
   position: {
@@ -12,6 +14,7 @@ const useStyles = makeStyles({
     alignSelf: "flex-start",
     display: "flex",
     alignItems: "center",
+    width: "100%",
   },
   title: {
     fontWeight: 800,
@@ -21,8 +24,10 @@ const useStyles = makeStyles({
   },
 });
 
-const MiPosicion = ({ value }) => {
+const MiPosicion = ({ value, onChange }) => {
   const classes = useStyles();
+
+  const [editing, setEditing] = useState(false);
 
   const { data: city } = useQuery(["myLocation", value], getMyLocation, {
     enabled: value && value.length === 2,
@@ -31,9 +36,24 @@ const MiPosicion = ({ value }) => {
   return (
     <div className={classes.position}>
       <Location />
-      <Typography variant={"h5"} className={classes.title}>
-        {city ? `${city.name}, ${city.country}` : "-"}
-      </Typography>
+      {!editing && (
+        <Link component="button" onClick={() => setEditing(true)}>
+          <Typography variant={"h5"} className={classes.title}>
+            {city ? `${city.name}, ${city.country}` : "-"}
+          </Typography>
+        </Link>
+      )}
+      {editing && (
+        <div style={{ width: "100%", paddingLeft: 5, paddingRight: 5 }}>
+          <InputLocation
+            onChange={(value) => {
+              setEditing(false);
+              console.log(value);
+              if (onChange) onChange(value);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

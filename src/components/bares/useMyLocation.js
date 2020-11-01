@@ -3,6 +3,7 @@ import axios from "axios";
 
 const useMyLocation = () => {
   const [location, setLocation] = useState([]);
+  const [selected, setSelected] = useState(null);
 
   useEffect(() => {
     const fallbackByIp = async () => {
@@ -37,7 +38,7 @@ const useMyLocation = () => {
     getSomeLocation();
   }, []);
 
-  return location;
+  return [selected ? selected : location, setSelected];
 };
 
 export default useMyLocation;
