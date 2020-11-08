@@ -66,7 +66,7 @@ const ButtonWithAuthPopup = ({ color, disabled, onClick, children }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose} color="secondary">
+          <Button onClick={handleClose} color="secondary">
             Cerrar
           </Button>
           <Button onClick={handleIngresar} color="secondary" autoFocus>

@@ -66,7 +66,7 @@ const InputLocation = ({ onChange }) => {
     <Autocomplete
       fullWidth={true}
       freeSolo
-      autoSelect
+      openOnFocus
       open={open}
       onOpen={() => {
         setOpen(true);
@@ -84,8 +84,7 @@ const InputLocation = ({ onChange }) => {
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder={"Seleccioná una ciudad"}
-          //label="Seleccioná una ciudad"
+          placeholder={"Seleccioná una ubicación"}
           onChange={(event) => setSearch(event.target.value)}
           variant="standard"
           InputProps={{

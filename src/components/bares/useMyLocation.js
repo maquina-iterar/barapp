@@ -1,47 +1,46 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 
 const useMyLocation = () => {
   const [location, setLocation] = useState([]);
   const [selected, setSelected] = useState(null);
 
+  const getLocation = async () => {
+    const current = await getCurrentLocation();
+
+    setLocation(current);
+  };
+
+  return [selected ? selected : location, setSelected, getLocation];
+};
+
+export default useMyLocation;
+
+export const permissionOptions = {
+  loading: "loading",
+  granted: "granted",
+  prompt: "prompt",
+  denied: "denied",
+};
+
+export const useLocationPermission = () => {
+  const [state, setState] = useState(permissionOptions.loading);
+
   useEffect(() => {
-    const fallbackByIp = async () => {
-      const { data } = await axios.get("https://ipinfo.io/json");
-
-      const current = data.loc.split(",");
-
-      setLocation(current);
-    };
-
-    const getLocation = async () => {
-      const current = await getCurrentLocation();
-
-      setLocation(current);
-    };
-
-    const getSomeLocation = async () => {
+    const getPermission = async () => {
       if (navigator.permissions) {
         const { state } = await navigator.permissions.query({
           name: "geolocation",
         });
 
-        if (["granted", "prompt"].includes(state)) {
-          getLocation();
-          return;
-        }
+        setState(state);
       }
-
-      fallbackByIp();
     };
 
-    getSomeLocation();
-  }, []);
+    getPermission();
+  });
 
-  return [selected ? selected : location, setSelected];
+  return state;
 };
-
-export default useMyLocation;
 
 const getCurrentLocation = () => {
   return new Promise((resolve, reject) => {

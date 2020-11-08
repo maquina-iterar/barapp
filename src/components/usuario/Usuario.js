@@ -9,6 +9,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import PersonIcon from "@material-ui/icons/ArrowForwardIos";
 import EmailIcon from "@material-ui/icons/Email";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import EditIcon from "@material-ui/icons/Create";
 import { useAuth0 } from "@auth0/auth0-react";
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles } from "@material-ui/core/styles";
@@ -66,6 +67,20 @@ const Usuario = () => {
                   <EmailIcon />
                 </ListItemIcon>
                 <ListItemText primary={user.email} />
+              </ListItem>
+              <ListItem
+                button
+                component={"a"}
+                href={"https://www.gravatar.com"}
+                target="_blank"
+              >
+                <ListItemIcon>
+                  <EditIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={"Editar mis datos"}
+                  secondary={"Ir a gravatar"}
+                />
               </ListItem>
               <ListItem
                 button
