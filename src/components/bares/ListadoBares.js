@@ -19,22 +19,22 @@ const ListadoBares = () => {
     fetchMore,
     canFetchMore,
   } = useInfiniteQuery(["bares", location], getBares, {
-    getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
+    //enabled: location.length === 2,
+    getFetchMore: (lastGroup, allGroups) => {
+      return lastGroup.length
+    },
   });
 
   const isLoading = status === "loading";
 
   const bares = data ? data.flatMap((bares) => bares) : [];
 
-  console.log("bares", bares);
-
   return (
-    <Layout title={"Barapp"}>
+    <Layout addLogo>
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
           gap: 20,
         }}
       >
@@ -51,12 +51,22 @@ const ListadoBares = () => {
         />
         <InfiniteScroll
           dataLength={bares ? bares.length : 0} //This is important field to render the next data
-          next={() => fetchMore(bares.length)}
-          hasMore={true}
-          loader={<h4>Loading...</h4>}
+          next={() => {
+            fetchMore(bares.length)
+          }}
+          hasMore={canFetchMore}
+          loader={<BarLoading />}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 20,
+          }}
           endMessage={
-            <p style={{ textAlign: "center" }}>
-              <b>Yay! You have seen it all</b>
+            <p style={{ textAlign: "center", color: "#fff" }}>
+              <b>Llegaste al final!</b>
+              <br />
+              Seguimos trabajando para sugerirte mas bares.
             </p>
           }
           // below props only if you need pull down functionality
@@ -90,12 +100,12 @@ const ListadoBares = () => {
 
 export default ListadoBares;
 
-const getBares = async (_, [latitude, longitude], cursor = 0) => {
-  console.log("cursor", cursor);
-
-  const apiUrl = `${environment.apiUrl}/bares?latitude=${latitude}&longitude=${longitude}&skip=${cursor}`;
+const getBares = async (_, [latitude, longitude], skip = 0) => {
+  const apiUrl = `${environment.apiUrl}/bares?latitude=${latitude}&longitude=${longitude}&skip=${skip}`;
 
   const { data } = await axios.get(apiUrl);
+
+  console.log("bares", latitude, data)
 
   return data;
 };

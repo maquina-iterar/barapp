@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -9,6 +9,8 @@ const InputLocation = ({ onChange }) => {
   const [options, setOptions] = useState([]);
   const [search, setSearch] = useState("");
   const loading = open; // && options.length === 0;
+
+  const inputRef = useRef(null);
 
   useEffect(() => {
     let active = true;
@@ -59,8 +61,16 @@ const InputLocation = ({ onChange }) => {
   useEffect(() => {
     if (!open) {
       setOptions([]);
+
+      setTimeout(()=>{
+        if (inputRef.current) {
+          console.log("inputRef.current", inputRef.current)
+  
+          inputRef.current.focus();
+        }
+      }, 200)
     }
-  }, [open]);
+  }, [open, inputRef]);
 
   return (
     <Autocomplete
@@ -70,7 +80,9 @@ const InputLocation = ({ onChange }) => {
       open={open}
       onOpen={() => {
         setOpen(true);
+        
       }}
+      loadingText="¿Por dónde salimos hoy?"
       onClose={() => {
         setOpen(false);
       }}
@@ -84,6 +96,7 @@ const InputLocation = ({ onChange }) => {
       renderInput={(params) => (
         <TextField
           {...params}
+          inputRef={inputRef}
           placeholder={"Seleccioná una ubicación"}
           onChange={(event) => setSearch(event.target.value)}
           variant="standard"

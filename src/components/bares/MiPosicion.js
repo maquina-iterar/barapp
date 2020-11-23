@@ -59,10 +59,11 @@ const MiPosicion = ({ value, onLocationEnable, onChange }) => {
     if (locationPermission === permissionOptions.prompt) {
       setOpen(true);
     }
-    if (locationPermission === permissionOptions.granted && onLocationEnable) {
+
+    if (value.length === 0 && locationPermission === permissionOptions.granted && onLocationEnable) {
       onLocationEnable();
     }
-  }, [locationPermission, onLocationEnable]);
+  }, [value, locationPermission, onLocationEnable]);
 
   return (
     <div className={classes.position}>

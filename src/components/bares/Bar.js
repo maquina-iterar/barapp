@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import Rating from "@material-ui/lab/Rating";
 import { withStyles } from "@material-ui/core/styles";
+import EmptyImage from "assets/ilustraciones/EmptyImage";
 
 const useStyles = makeStyles({
   root: {
@@ -42,7 +43,9 @@ const Bar = ({ value }) => {
   return (
     <Card className={classes.root}>
       <CardActionArea component={Link} to={`/bar/${_id}`}>
-        <CardMedia className={classes.media} image={fotoUrl} title={nombre} />
+        <CardMedia className={classes.media} image={fotoUrl} title={nombre}>
+           {!fotoUrl && <EmptyImage style={{ height: 140, width: "100%" }} />}
+        </CardMedia>
         <CardContent style={{ paddingBottom: 24 }}>
           <div style={{ display: "flex" }}>
             <Typography
@@ -65,7 +68,11 @@ const Bar = ({ value }) => {
           <Typography
             variant="body2"
             component="p"
-            style={{ color: "#83848C" }}
+            style={{ 
+              color: "#83848C", 
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              whiteSpace: "nowrap" }}
           >
             {descripcion}
           </Typography>

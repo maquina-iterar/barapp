@@ -9,6 +9,7 @@ import VolverIcon from "@material-ui/icons/ArrowBack";
 import { Link } from "react-router-dom";
 import LoginButton from "./LoginButton";
 import Back from "../assets/icons/Back";
+import Logo from "assets/Logo";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Layout = ({ children, backUrl, title }) => {
+const Layout = ({ children, backUrl, title, addLogo }) => {
   const classes = useStyles();
 
   return (
@@ -63,9 +64,12 @@ const Layout = ({ children, backUrl, title }) => {
               <Back />
             </IconButton>
           )}
-          <Typography variant="h6" className={classes.title}>
-            {title}
-          </Typography>
+          <div className={classes.title}>
+           {addLogo && <Logo />}
+           {title && <Typography variant="h6">
+                       {title}
+                      </Typography>}
+          </div>
           <LoginButton />
         </Toolbar>
       </AppBar>

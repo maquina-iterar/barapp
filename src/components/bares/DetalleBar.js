@@ -27,6 +27,7 @@ import IconButton from "@material-ui/core/IconButton";
 import PinOutline from "assets/icons/PinOutline";
 import Instagram from "assets/icons/Instagram";
 import Website from "assets/icons/Website";
+import EmptyImage from "assets/ilustraciones/EmptyImage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -178,6 +179,8 @@ const DetalleBar = () => {
   const rating =
     votantesCount > 0 ? (meGusta / votantesCount) * STARS_NUMBER : -1;
 
+  const descriptionLines = descripcion ? descripcion.split("\n") : [];
+
   return (
     <Layout backUrl="/">
       <div style={{ paddingBottom: 18 }}>
@@ -214,12 +217,14 @@ const DetalleBar = () => {
           />
         )}
         <div style={{ position: "relative" }}>
-          <CardActionArea onClick={() => setGaleriaOpened(true)}>
+          <CardActionArea disabled={!(galeria && galeria[activeStep])} onClick={() => setGaleriaOpened(true)}>
             <CardMedia
               className={classes.media}
               image={galeria && galeria[activeStep]}
               title={nombre}
-            />
+            >
+              {!(galeria && galeria[activeStep]) && <EmptyImage style={{ height: "100%", width: "100%" }} />}
+            </CardMedia>
           </CardActionArea>
           <MobileStepper
             steps={maxSteps}
@@ -382,14 +387,19 @@ const DetalleBar = () => {
           </div>
 
           <div>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              component="p"
-              className={classes.descripcionBar}
-            >
-              {descripcion}
+            {descriptionLines.map((line, index) => <>
+              {index > 0 && <br />}
+              <Typography
+                key={`bar-description-line-${index}`}
+                variant="body2"
+                color="textSecondary"
+                component="p"
+                className={classes.descripcionBar}
+              >
+              {line}
             </Typography>
+            
+            </>)}
           </div>
 
           <div>

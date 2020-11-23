@@ -37,7 +37,7 @@ export const useLocationPermission = () => {
     };
 
     getPermission();
-  });
+  }, [setState]);
 
   return state;
 };
